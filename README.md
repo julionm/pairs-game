@@ -13,4 +13,9 @@
 - All pairs are randomly mixed in a board and you need to find all of them
   - Maybe create a timer to do this...
 - At first it'll use something simple, like letters or numbers
-- 
+
+## PairsGame
+
+Define an array with Pairs and try to find all pairs.
+
+ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
