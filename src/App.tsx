@@ -1,5 +1,5 @@
 import './App.css'
-import PairsGame from './components/PairsGame';
+import PairsGame from 'components/PairsGame';
 
 const PAIRS = [
   ["A", "1"],

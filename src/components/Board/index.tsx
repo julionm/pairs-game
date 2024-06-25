@@ -1,62 +1,81 @@
-import { useRef, useState } from "react";
-import Card from "../Card";
-import { randomize } from "../../utils/random";
+import { useState } from "react";
+import Card from "components/Card";
+import { randomize } from "utils/random";
 
 interface BoardOptions {
     cards: string[],
-    isPair: (first: string, second: string) => boolean
+    answerSize: number;
+    isValidAnswer: (answer: string[]) => boolean
 }
 
-function Board({ cards, isPair } : BoardOptions) {
+function Board({ cards, isValidAnswer, answerSize } : BoardOptions) {
 
-    const randomCards = useRef(randomize(cards));
-
-    const [foundCards, setFoundCards] = useState(new Set());
-    const [firstCard, setFirstCard] = useState('');
+    const [randomCards, _] = useState(randomize(cards));
+    const [correctCards, setCorrectCards] = useState(new Set());
+    const [selectedCards, setSelectedCards] = useState<string[]>([]);
 
     function isCorrect (value: string) {
-        return foundCards.has(value);
+        return correctCards.has(value);
     }
 
     function isSelected(value: string) {
-        return firstCard === value;    
+        return selectedCards.some(card => card === value);    
     }
 
     function clickCard (cardValue: string) {
-        if (foundCards.has(cardValue)) return;
+        if (isCorrect(cardValue) || selectedCards.length === answerSize) return;
         
-        if (!firstCard) {
-            setFirstCard(cardValue);
-        } else {
-            if (isPair(firstCard, cardValue)) {
-                const aux = new Set([...foundCards]);
-                aux.add(firstCard);
-                aux.add(cardValue);
-
-                setFoundCards(aux);
-                setFirstCard('');
-
-                if (foundCards.size === cards.length) {
-                    console.log('win!');
-                }
-
-                return;
-            }
-            
-            setFirstCard('');
+        const newSelectedCards = [...selectedCards, cardValue];
+        setSelectedCards([...selectedCards, cardValue]);
+        
+        if (newSelectedCards.length === answerSize) {
+            setTimeout(() => handleValidation(newSelectedCards), 200);
         }
+    }
+
+    function handleValidation(newSelectedCards: string[]) {
+        if (isValidAnswer(newSelectedCards)) {
+            const newCorrectCards = new Set([...correctCards]);
+            newSelectedCards.forEach(card => newCorrectCards.add(card));
+
+            setCorrectCards(newCorrectCards);
+            setSelectedCards([]);
+
+            if (newCorrectCards.size === cards.length) {
+                // TODO win message
+            }
+
+            return;
+        }
+
+        newSelectedCards.forEach(card => {
+            const element = document.getElementById(card);
+            element?.classList.add('animate-[wrong_0.3s_linear_infinite]');
+        })
+
+        // Deal with errors
+        setTimeout(() => setSelectedCards([]), 300);    
+    }
+
+    function getClassByStatus(value: string) {
+        if (isCorrect(value)) {
+            return 'bg-blue-400';
+        } else if (isSelected(value)) {
+            return 'bg-orange-500';
+        }
+
+        return '';
     }
 
     return (
         <div id="board" className='max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto'>
             {
-                randomCards.current.map(value => (
+                randomCards.map(value => (
                     <Card
                         key={value}
                         value={value}
                         callback={clickCard}
-                        isCorrect={isCorrect(value)}
-                        isSelected={isSelected(value)} />    
+                        customClass={getClassByStatus(value)} />    
                 ))
             }
         </div>

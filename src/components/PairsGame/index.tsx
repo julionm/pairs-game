@@ -1,4 +1,4 @@
-import Board from "../Board";
+import Board from "components/Board";
 
 interface PairsGameOptions {
     pairs: string[][]
@@ -15,7 +15,8 @@ function PairsGame({ pairs }: PairsGameOptions) {
         pairs.map(([val1, val2]) => val1 + val2)
     );
 
-    function isPair (first: string, second: string) {
+    function isPair (answer: string[]) {
+        const [first, second] = answer;
         return pairsSet.has(first + second) || pairsSet.has(second + first);
     }
 
@@ -23,7 +24,8 @@ function PairsGame({ pairs }: PairsGameOptions) {
         <div className="h-full w-full grid items-center">
             <Board
                 cards={cards}
-                isPair={isPair} />
+                isValidAnswer={isPair}
+                answerSize={2} />
         </div>
     )
 }
