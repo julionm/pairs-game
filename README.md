@@ -19,3 +19,20 @@
 Define an array with Pairs and try to find all pairs.
 
 ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
+
+## Next Steps
+
+- allow unselecting cards in Pairs Game
+- add a timer to the game
+- add counting of miss and hits
+-  maybe add a home screen
+   -  no actual need for login
+   -  allow game selection
+   -  create a about page that shows information about me
+- add a dark mode
+- add animation when the user selects a pair correctly
+- create other games that use the same logic (maybe something like conexo)
+  - the idea here is to show that my components are reusable enough
+- you win animation
+- allow different values for pairs such as: images, letters from other alphabets, maybe even expressions
+- make the Pairs Game work for mobile (check how Conexo does this)

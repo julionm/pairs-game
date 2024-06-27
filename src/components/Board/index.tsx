@@ -25,6 +25,14 @@ function Board({ cards, isValidAnswer, answerSize } : BoardOptions) {
     function clickCard (cardValue: string) {
         if (isCorrect(cardValue) || selectedCards.length === answerSize) return;
         
+        const indexOfExistingCard = selectedCards.findIndex(card => card === cardValue);
+        if (indexOfExistingCard > -1) {
+            const newSelectedCards = [...selectedCards];
+            newSelectedCards.splice(indexOfExistingCard, 1);
+            setSelectedCards(newSelectedCards);
+            return;
+        }
+
         const newSelectedCards = [...selectedCards, cardValue];
         setSelectedCards([...selectedCards, cardValue]);
         
