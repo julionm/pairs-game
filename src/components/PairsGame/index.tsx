@@ -1,7 +1,9 @@
 import Board from "components/Board";
+import { Card } from "../../models/cards";
+import { useState } from "react";
 
 interface PairsGameOptions {
-    pairs: string[][]
+    pairs: Card[][]
 }
 
 function PairsGame({ pairs }: PairsGameOptions) {
@@ -11,19 +13,19 @@ function PairsGame({ pairs }: PairsGameOptions) {
         acc.push(val2);
         return acc;
     }, []);
-    const pairsSet = new Set(
-        pairs.map(([val1, val2]) => val1 + val2)
-    );
+    const [pairsSet] = useState(new Set(
+        pairs.map(([val1, val2]) => val1.id + "" + val2.id)
+    ));
 
-    function isPair (answer: string[]) {
-        const [first, second] = answer;
-        return pairsSet.has(first + second) || pairsSet.has(second + first);
+    function isPair (answer: number[]) {
+        const [firstId, secondId] = answer;
+        return pairsSet.has(firstId + "" + secondId) || pairsSet.has(secondId + "" + firstId);
     }
 
     return (
         <div className="h-full w-full grid items-center">
             <Board
-                cards={cards}
+                initialCards={cards}
                 isValidAnswer={isPair}
                 answerSize={2} />
         </div>

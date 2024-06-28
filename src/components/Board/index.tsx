@@ -1,91 +1,115 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Card from "components/Card";
 import { randomize } from "utils/random";
+import { Card as CardType } from "../../models/cards";
 
 interface BoardOptions {
-    cards: string[],
+    initialCards: CardType[],
     answerSize: number;
-    isValidAnswer: (answer: string[]) => boolean
+    isValidAnswer: (answer: number[]) => boolean
 }
 
-function Board({ cards, isValidAnswer, answerSize } : BoardOptions) {
+function Board({ initialCards, isValidAnswer, answerSize } : BoardOptions) {
 
-    const [randomCards, _] = useState(randomize(cards));
-    const [correctCards, setCorrectCards] = useState(new Set());
-    const [selectedCards, setSelectedCards] = useState<string[]>([]);
+    const [randomCards] = useState<CardType[]>(randomize(initialCards));
+    const [correctCards, setCorrectCards] = useState<Set<number>>(new Set());
+    const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
 
-    function isCorrect (value: string) {
-        return correctCards.has(value);
-    }
+    const cardsElements = useRef<{ [key: string]: HTMLDivElement }>({});
 
-    function isSelected(value: string) {
-        return selectedCards.some(card => card === value);    
-    }
-
-    function clickCard (cardValue: string) {
-        if (isCorrect(cardValue) || selectedCards.length === answerSize) return;
+    function onSelect (card: CardType) {
+        if (isCardCorrect(card) || isRoundFinished()) return;
         
-        const indexOfExistingCard = selectedCards.findIndex(card => card === cardValue);
-        if (indexOfExistingCard > -1) {
-            const newSelectedCards = [...selectedCards];
-            newSelectedCards.splice(indexOfExistingCard, 1);
+        const newSelectedCards = new Set([...selectedCards]);
+
+        if (selectedCards.has(card.id)) {
+            newSelectedCards.delete(card.id);
             setSelectedCards(newSelectedCards);
             return;
         }
-
-        const newSelectedCards = [...selectedCards, cardValue];
-        setSelectedCards([...selectedCards, cardValue]);
         
-        if (newSelectedCards.length === answerSize) {
-            setTimeout(() => handleValidation(newSelectedCards), 200);
+        newSelectedCards.add(card.id);
+        updateCards(newSelectedCards);
+    }
+
+    function updateCards (newSelectedCards: Set<number>) {
+        setSelectedCards(newSelectedCards);
+        
+        if (newSelectedCards.size === answerSize) {
+            setTimeout(() => handleRoundFinish(newSelectedCards), 200);
+            return;
         }
     }
 
-    function handleValidation(newSelectedCards: string[]) {
-        if (isValidAnswer(newSelectedCards)) {
+    function handleRoundFinish (cards: Set<number>) {
+        if (isValidAnswer([...cards])) {
             const newCorrectCards = new Set([...correctCards]);
-            newSelectedCards.forEach(card => newCorrectCards.add(card));
+            cards.forEach(cardId => newCorrectCards.add(cardId));
 
             setCorrectCards(newCorrectCards);
-            setSelectedCards([]);
+            setSelectedCards(new Set());
 
-            if (newCorrectCards.size === cards.length) {
+            // TODO is game finished
+            if (newCorrectCards.size === answerSize) {
                 // TODO win message
             }
 
             return;
         }
 
-        newSelectedCards.forEach(card => {
-            const element = document.getElementById(card);
+        cards.forEach(cardId => {
+            const element = cardsElements.current[cardId];
             element?.classList.add('animate-[wrong_0.3s_linear_infinite]');
         })
 
-        // Deal with errors
-        setTimeout(() => setSelectedCards([]), 300);    
+        setTimeout(() => {
+            cards.forEach(cardId => {
+                const element = cardsElements.current[cardId];
+                element?.classList.remove('animate-[wrong_0.3s_linear_infinite]');
+            })
+            setSelectedCards(new Set())
+        }, 300);    
     }
 
-    function getClassByStatus(value: string) {
-        if (isCorrect(value)) {
+    function getClassByStatus(card: CardType) {
+        if (isCardCorrect(card)) {
             return 'bg-blue-400';
-        } else if (isSelected(value)) {
+        } else if (isCardSelected(card)) {
             return 'bg-orange-500';
         }
 
         return '';
     }
 
+    function isRoundFinished() {
+        return selectedCards.size === answerSize;
+    }
+
+    function isCardCorrect (card: CardType) {
+        return correctCards.has(card.id);
+    }
+
+    function isCardSelected (card: CardType): boolean {
+        return selectedCards.has(card.id);
+    }
+
     return (
-        <div id="board" className='max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto'>
-            {
-                randomCards.map(value => (
-                    <Card
-                        key={value}
-                        value={value}
-                        callback={clickCard}
-                        customClass={getClassByStatus(value)} />    
-                ))
-            }
+        <div>
+            <div
+                id="board"
+                className={`max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
+                {
+                    randomCards.map((card: CardType) => (
+                        <Card
+                            key={card.id}
+                            ref={(el: HTMLDivElement) => cardsElements.current[card.id] = el}
+                            card={card}
+                            onSelect={onSelect}
+                            customClass={getClassByStatus(card)} />    
+                    ))
+                }
+            </div>
+            <p className="">You Win!</p>
         </div>
     );
 }
