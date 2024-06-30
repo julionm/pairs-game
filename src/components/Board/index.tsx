@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Card from "components/Card";
 import { randomize } from "utils/random";
 import { Card as CardType } from "../../models/cards";
@@ -6,15 +6,17 @@ import { Card as CardType } from "../../models/cards";
 interface BoardOptions {
     initialCards: CardType[],
     answerSize: number;
-    isValidAnswer: (answer: number[]) => boolean
+    isValidAnswer: (answer: number[]) => boolean,
+    onGameFinished: () => void
 }
 
-function Board({ initialCards, isValidAnswer, answerSize } : BoardOptions) {
+function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : BoardOptions) {
 
-    const [randomCards] = useState<CardType[]>(randomize(initialCards));
     const [correctCards, setCorrectCards] = useState<Set<number>>(new Set());
     const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
-
+    
+    const randomCards = useMemo<CardType[]>(() => randomize(initialCards), []);
+   
     const cardsElements = useRef<{ [key: string]: HTMLDivElement }>({});
 
     function onSelect (card: CardType) {
@@ -50,8 +52,8 @@ function Board({ initialCards, isValidAnswer, answerSize } : BoardOptions) {
             setSelectedCards(new Set());
 
             // TODO is game finished
-            if (newCorrectCards.size === answerSize) {
-                // TODO win message
+            if (newCorrectCards.size === randomCards.length) {
+                onGameFinished();
             }
 
             return;
@@ -73,9 +75,9 @@ function Board({ initialCards, isValidAnswer, answerSize } : BoardOptions) {
 
     function getClassByStatus(card: CardType) {
         if (isCardCorrect(card)) {
-            return 'bg-blue-400';
+            return 'bg-correct';
         } else if (isCardSelected(card)) {
-            return 'bg-orange-500';
+            return 'bg-wrong';
         }
 
         return '';
@@ -94,22 +96,19 @@ function Board({ initialCards, isValidAnswer, answerSize } : BoardOptions) {
     }
 
     return (
-        <div>
-            <div
-                id="board"
-                className={`max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
-                {
-                    randomCards.map((card: CardType) => (
-                        <Card
-                            key={card.id}
-                            ref={(el: HTMLDivElement) => cardsElements.current[card.id] = el}
-                            card={card}
-                            onSelect={onSelect}
-                            customClass={getClassByStatus(card)} />    
-                    ))
-                }
-            </div>
-            <p className="">You Win!</p>
+        <div
+            id="board"
+            className={`max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
+            {
+                randomCards.map((card: CardType) => (
+                    <Card
+                        key={card.id}
+                        ref={(el: HTMLDivElement) => cardsElements.current[card.id] = el}
+                        card={card}
+                        onSelect={onSelect}
+                        customClass={getClassByStatus(card)} />    
+                ))
+            }
         </div>
     );
 }

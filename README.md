@@ -37,7 +37,7 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
 - [ ] add animation when the user selects a pair correctly
 - [ ] create other games that use the same logic (maybe something like conexo)
   - the idea here is to show that my components are reusable enough
-- [ ] you win animation
+- [ ] you win animation - ONGOING
 - [x] allow different values for pairs such as: images, letters from other alphabets, maybe even expressions
   - now I'm using ids to identify each value so this will work in the future
 - [ ] make the Pairs Game work for mobile (check how Conexo does this)

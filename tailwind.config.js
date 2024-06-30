@@ -8,6 +8,10 @@ export default {
     extend: {
       fontFamily: {
         'inter': 'Inter'
+      },
+      colors: {
+        'correct': '#38bdf8',
+        'wrong': '#f97316'
       }
     },
   },
