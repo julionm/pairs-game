@@ -36,16 +36,18 @@ const SquareByType: Record<Answer, SquareCallback> = {
 function PairsGame({ pairs }: PairsGameOptions) {
 
     const [isWinModalVisible, setIsWinModalVisible] = useState(false);
-    const [cards] = useState(
-        pairs.reduce((acc, [val1, val2]) => {
-            acc.push(val1);
-            acc.push(val2);
-            return acc;
-        }, [])
-    );
 
     const events = useRef<Event[]>([]);
 
+    const cards = useMemo(
+        () =>
+            pairs.reduce((acc, [val1, val2]) => {
+                acc.push(val1);
+                acc.push(val2);
+                return acc;
+            }, [])
+        , []
+    );
     const pairsSet = useMemo(
         () => new Set(
             pairs.map(([val1, val2]) => val1.id + "" + val2.id)
@@ -88,8 +90,8 @@ function PairsGame({ pairs }: PairsGameOptions) {
             <Modal
                 isVisible={isWinModalVisible}
                 onClose={() => setIsWinModalVisible(false)}>
-                <div className="p-4 flex flex-col items-center gap-4">
-                    <h1 className="text-xl">Well Done!</h1>
+                <div className="p-6 flex flex-col items-center gap-4">
+                    <h1 className="text-xl font-bold">Well Done!</h1>
 
                     <p>You found all correct cards within {attempts} attempts!</p>
 

@@ -22,8 +22,10 @@ function Modal({ children, isVisible = false, onClose }: ModalOptions) {
 
     return (
         <ModalPortal>
-            <div className={`relative z-20 ${isVisible ? 'block' : 'hidden'}`}>
-                <div className="fixed inset-0 bg-black bg-opacity-75">  
+            <div className={`fixed inset-0 z-1 scale-0 ${isVisible ? 'modal-show' : 'modal-hide'}`}>
+                <div
+                    onClick={onClose}
+                    className="fixed inset-0 bg-black bg-opacity-75">  
                 </div>
 
                 <div className="fixed inset-0 flex items-end sm:items-center sm:justify-center">

@@ -28,7 +28,7 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
 - [ ] improve grid system of board
 - [x] allow unselecting cards in Pairs Game
 - [ ] add a timer to the game
-- [ ] add counting of miss and hits
+- [x] add counting of miss and hits
 - [ ] maybe add a home screen
    -  no actual need for login
    -  allow game selection
