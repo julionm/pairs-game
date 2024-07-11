@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import Card from "components/Card";
+import Card, { CardRef } from "components/Card";
 import { Card as CardType } from "../../models/cards";
 
 interface BoardOptions {
@@ -14,7 +14,7 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
     const [correctCards, setCorrectCards] = useState<Set<number>>(new Set());
     const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
        
-    const cardsElements = useRef<{ [key: string]: HTMLDivElement }>({});
+    const cardsElements = useRef<{ [key: string]: CardRef }>({});
 
     function onSelect (card: CardType) {
         if (isCardCorrect(card) || isRoundFinished()) return;
@@ -43,7 +43,10 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
     function handleRoundFinish (cards: Set<number>) {
         if (isValidAnswer([...cards])) {
             const newCorrectCards = new Set([...correctCards]);
-            cards.forEach(cardId => newCorrectCards.add(cardId));
+            cards.forEach(cardId => {
+                newCorrectCards.add(cardId);
+                cardsElements.current[cardId].handleSuccess();
+            });
 
             setCorrectCards(newCorrectCards);
             setSelectedCards(new Set());
@@ -56,27 +59,8 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
         }
 
         cards.forEach(cardId => {
-            const element = cardsElements.current[cardId];
-            element?.classList.add('animate-[wrong_0.3s_linear_infinite]');
+            cardsElements.current[cardId].handleError(() => setSelectedCards(new Set()));
         })
-
-        setTimeout(() => {
-            cards.forEach(cardId => {
-                const element = cardsElements.current[cardId];
-                element?.classList.remove('animate-[wrong_0.3s_linear_infinite]');
-            })
-            setSelectedCards(new Set())
-        }, 300);    
-    }
-
-    function getClassByStatus(card: CardType) {
-        if (isCardCorrect(card)) {
-            return 'bg-correct';
-        } else if (isCardSelected(card)) {
-            return 'bg-wrong';
-        }
-
-        return '';
     }
 
     function isRoundFinished() {
@@ -87,10 +71,6 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
         return correctCards.has(card.id);
     }
 
-    function isCardSelected (card: CardType): boolean {
-        return selectedCards.has(card.id);
-    }
-
     return (
         <div
             id="board"
@@ -99,10 +79,9 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
                 initialCards.map((card: CardType) => (
                     <Card
                         key={card.id}
-                        ref={(el: HTMLDivElement) => cardsElements.current[card.id] = el}
+                        ref={(el: CardRef) => cardsElements.current[card.id] = el}
                         card={card}
-                        onSelect={onSelect}
-                        customClass={getClassByStatus(card)} />    
+                        onSelect={onSelect} />    
                 ))
             }
         </div>
