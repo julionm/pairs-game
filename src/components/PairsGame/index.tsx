@@ -2,6 +2,7 @@ import Board from "components/Board";
 import { Card } from "../../models/cards";
 import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import Modal from "components/Modal";
+import { randomize } from "utils/random";
 
 interface PairsGameOptions {
     pairs: Card[][]
@@ -39,13 +40,13 @@ function PairsGame({ pairs }: PairsGameOptions) {
 
     const events = useRef<Event[]>([]);
 
-    const cards = useMemo(
+    const cards: Map<number, Card> = useMemo(
         () =>
             pairs.reduce((acc, [val1, val2]) => {
-                acc.push(val1);
-                acc.push(val2);
+                acc.set(val1.id, val1);
+                acc.set(val2.id, val2);
                 return acc;
-            }, [])
+            }, new Map())
         , []
     );
     const pairsSet = useMemo(
@@ -54,6 +55,7 @@ function PairsGame({ pairs }: PairsGameOptions) {
         )
     , []);
     const attempts = useMemo(() => events.current.length, [isWinModalVisible]);
+    const randomCards = useMemo<Card[]>(() => randomize(Array.from(cards.values())), []);
 
     const EventsList = useCallback(() => (
         events.current.map(event => {
@@ -83,7 +85,7 @@ function PairsGame({ pairs }: PairsGameOptions) {
     return (
         <div className="h-full w-full grid items-center">
             <Board
-                initialCards={cards}
+                initialCards={randomCards}
                 isValidAnswer={isPair}
                 onGameFinished={() => setIsWinModalVisible(true)}
                 answerSize={2} />

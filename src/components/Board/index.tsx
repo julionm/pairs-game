@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Card from "components/Card";
-import { randomize } from "utils/random";
 import { Card as CardType } from "../../models/cards";
 
 interface BoardOptions {
@@ -14,9 +13,7 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
 
     const [correctCards, setCorrectCards] = useState<Set<number>>(new Set());
     const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
-    
-    const randomCards = useMemo<CardType[]>(() => randomize(initialCards), []);
-   
+       
     const cardsElements = useRef<{ [key: string]: HTMLDivElement }>({});
 
     function onSelect (card: CardType) {
@@ -51,8 +48,7 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
             setCorrectCards(newCorrectCards);
             setSelectedCards(new Set());
 
-            // TODO is game finished
-            if (newCorrectCards.size === randomCards.length) {
+            if (newCorrectCards.size === initialCards.length) {
                 onGameFinished();
             }
 
@@ -98,9 +94,9 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
     return (
         <div
             id="board"
-            className={`max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
+            className={`max-w-screen-lg grid grid-cols-[repeat(4,auto)] sm:grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
             {
-                randomCards.map((card: CardType) => (
+                initialCards.map((card: CardType) => (
                     <Card
                         key={card.id}
                         ref={(el: HTMLDivElement) => cardsElements.current[card.id] = el}
