@@ -18,7 +18,7 @@ interface ModalOptions {
     onClose: () => void
 }
 
-function Modal({ children, isVisible = false, onClose }: ModalOptions) {
+export function Modal({ children, isVisible = false, onClose }: ModalOptions) {
 
     return (
         <ModalPortal>
@@ -45,5 +45,3 @@ function Modal({ children, isVisible = false, onClose }: ModalOptions) {
         </ModalPortal>
     )
 }
-
-export default Modal;

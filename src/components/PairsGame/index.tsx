@@ -1,7 +1,7 @@
-import Board from "components/Board";
-import { Card } from "../../models/cards";
 import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import Modal from "components/Modal";
+import { CardBoard } from "components/Board";
+import { Card } from "models/cards";
+import { Modal } from "components/Modal";
 import { randomize } from "utils/random";
 
 interface PairsGameOptions {
@@ -34,7 +34,7 @@ const SquareByType: Record<Answer, SquareCallback> = {
     [Answer.WRONG]: WrongSquare,
 }
 
-function PairsGame({ pairs }: PairsGameOptions) {
+export function PairsGame({ pairs }: PairsGameOptions) {
 
     const [isWinModalVisible, setIsWinModalVisible] = useState(false);
 
@@ -84,7 +84,7 @@ function PairsGame({ pairs }: PairsGameOptions) {
 
     return (
         <div className="h-full w-full grid items-center">
-            <Board
+            <CardBoard
                 initialCards={randomCards}
                 isValidAnswer={isPair}
                 onGameFinished={() => setIsWinModalVisible(true)}
@@ -105,5 +105,3 @@ function PairsGame({ pairs }: PairsGameOptions) {
         </div>
     )
 }
-
-export default PairsGame;

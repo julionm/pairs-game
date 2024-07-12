@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import Card, { CardRef } from "components/Card";
-import { Card as CardType } from "../../models/cards";
+import { useRef } from "react";
+import { Card, CardRef } from "components/Card";
+import { Card as CardType } from "models/cards";
 
 interface BoardOptions {
     initialCards: CardType[],
@@ -9,66 +9,57 @@ interface BoardOptions {
     onGameFinished: () => void
 }
 
-function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : BoardOptions) {
+export function CardBoard({ initialCards, isValidAnswer, answerSize, onGameFinished } : BoardOptions) {
 
-    const [correctCards, setCorrectCards] = useState<Set<number>>(new Set());
-    const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
+    const correctCards: Set<number> = new Set();
+    const selectedCards: Set<number> = new Set();
        
     const cardsElements = useRef<{ [key: string]: CardRef }>({});
 
-    function onSelect (card: CardType) {
-        if (isCardCorrect(card) || isRoundFinished()) return;
+    function onSelect (card: CardType): boolean {
+        if (isCardCorrect(card.id) || isRoundFinished()) return false;
         
-        const newSelectedCards = new Set([...selectedCards]);
-
         if (selectedCards.has(card.id)) {
-            newSelectedCards.delete(card.id);
-            setSelectedCards(newSelectedCards);
-            return;
+            selectedCards.delete(card.id);
+            return false;
         }
         
-        newSelectedCards.add(card.id);
-        updateCards(newSelectedCards);
-    }
-
-    function updateCards (newSelectedCards: Set<number>) {
-        setSelectedCards(newSelectedCards);
+        selectedCards.add(card.id);
         
-        if (newSelectedCards.size === answerSize) {
-            setTimeout(() => handleRoundFinish(newSelectedCards), 200);
-            return;
+        if (selectedCards.size === answerSize) {
+            setTimeout(() => {
+                if (isValidAnswer([...selectedCards])) {
+                    selectedCards.forEach(cardId => {
+                        correctCards.add(cardId);
+                        cardsElements.current[cardId].handleSuccess();
+                    });
+        
+                    selectedCards.clear();
+        
+                    if (correctCards.size === initialCards.length) {
+                        onGameFinished();
+                    }
+        
+                    return;
+                }
+        
+                selectedCards.forEach(cardId => {
+                    cardsElements.current[cardId].handleError();
+                })
+        
+                selectedCards.clear();
+            }, 200);
         }
-    }
 
-    function handleRoundFinish (cards: Set<number>) {
-        if (isValidAnswer([...cards])) {
-            const newCorrectCards = new Set([...correctCards]);
-            cards.forEach(cardId => {
-                newCorrectCards.add(cardId);
-                cardsElements.current[cardId].handleSuccess();
-            });
-
-            setCorrectCards(newCorrectCards);
-            setSelectedCards(new Set());
-
-            if (newCorrectCards.size === initialCards.length) {
-                onGameFinished();
-            }
-
-            return;
-        }
-
-        cards.forEach(cardId => {
-            cardsElements.current[cardId].handleError(() => setSelectedCards(new Set()));
-        })
+        return true;
     }
 
     function isRoundFinished() {
         return selectedCards.size === answerSize;
     }
 
-    function isCardCorrect (card: CardType) {
-        return correctCards.has(card.id);
+    function isCardCorrect (cardId: number) {
+        return correctCards.has(cardId);
     }
 
     return (
@@ -87,5 +78,3 @@ function Board({ initialCards, isValidAnswer, answerSize, onGameFinished } : Boa
         </div>
     );
 }
-
-export default Board;
