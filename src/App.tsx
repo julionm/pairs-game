@@ -1,10 +1,7 @@
-import PairsGamePage from './pages/PairsGame';
-import './App.css'
+import { PairsGamePage } from './pages/PairsGame';
 
-function App() {
+export function App() {
   return (
     <PairsGamePage />
   )
 }
-
-export default App

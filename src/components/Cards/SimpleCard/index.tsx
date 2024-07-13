@@ -1,5 +1,6 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Card as CardType } from "../../models/cards";
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { Card, CardRef } from "models/cards";
+import { ComponentByCardType } from "components/Cards/ComponentByCardType";
 
 enum CardState {
     DEFAULT = 'default',
@@ -14,17 +15,20 @@ const stateToClass: Record<CardState, String> = {
 }
 
 interface CardOptions {
-    card: CardType,
-    onSelect: (card: CardType) => boolean
+    card: Card,
+    onSelect: (card: Card) => boolean
 }
 
-export interface CardRef {
-    handleError: (callback?: () => void) => void,
-    handleSuccess: (callback?: () => void) => void
-}
-
-export const Card = forwardRef<CardRef | null, CardOptions>(
+export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
     ({ card, onSelect }: CardOptions, ref) => {
+
+        const CardValue = useCallback(() => {
+            const Component = ComponentByCardType[card.type];
+
+            return (
+                <Component cardValue={card.value} />
+            )
+        }, []);
 
         const [cardState, setCardState] = useState<CardState>(CardState.DEFAULT);
         const [customClass, setCustomClass] = useState<String>("");
@@ -32,7 +36,7 @@ export const Card = forwardRef<CardRef | null, CardOptions>(
 
         useImperativeHandle(ref, () => {
             return {
-                handleError: (callback) => {
+                handleError: () => {
                     if (!cardRef.current) {
                         return;
                     }
@@ -42,46 +46,38 @@ export const Card = forwardRef<CardRef | null, CardOptions>(
                     setTimeout(() => {
                         setCustomClass('');
                         setCardState(CardState.DEFAULT);
-
-                        if (callback) {
-                            callback();
-                        }
                     }, 300);
                 },
-                handleSuccess: (callback) => {
+                handleSuccess: () => {
                     setCardState(CardState.CORRECT);
-
-                    if (callback) {
-                        callback();
-                    }
                 }
             }
         }, []);
 
         function handleSelection() {
+            if (cardState === CardState.CORRECT) return;
+
             if (cardState === CardState.DEFAULT) {
                 setCardState(CardState.SELECTED);
-                onSelect(card);
             } else if (cardState === CardState.SELECTED) {
                 setCardState(CardState.DEFAULT);
-                onSelect(card);
             }
 
+            onSelect(card);
         }
 
         return (
             <div
-                id={"" + card.id}
+                id={String(card.id)}
                 ref={cardRef}
                 className={`
                     h-24 w-20 rounded-xl cursor-pointer
-                    grid place-items-center font-bold text-lg
-                    transition-[transform] font-inter
+                    grid place-items-center transition-[transform]
                     ${ stateToClass[cardState] }
                     ${ customClass }
                 `}
                 onClick={handleSelection}>
-                { card.value }
+                <CardValue />
             </div>  
         );
     }

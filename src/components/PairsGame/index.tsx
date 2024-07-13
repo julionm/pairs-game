@@ -11,7 +11,7 @@ interface PairsGameOptions {
 interface Event {
    answerType: Answer,
    id: string,
-   triedValues: string[] // value types
+   triedValues: Card[] // value types
 }
 
 type SquareCallback= () => ReactNode;
@@ -47,8 +47,7 @@ export function PairsGame({ pairs }: PairsGameOptions) {
                 acc.set(val2.id, val2);
                 return acc;
             }, new Map())
-        , []
-    );
+    , []);
     const pairsSet = useMemo(
         () => new Set(
             pairs.map(([val1, val2]) => val1.id + "" + val2.id)
@@ -71,11 +70,24 @@ export function PairsGame({ pairs }: PairsGameOptions) {
         const [firstId, secondId] = answer;
         const isCorrect = pairsSet.has(firstId + "" + secondId) || pairsSet.has(secondId + "" + firstId);
         
+        const triedValues: Card[] = [];
+
+        const firstCard = cards.get(firstId);
+        const secondCard = cards.get(secondId);
+
+        if (firstCard) {
+            triedValues.push(firstCard);
+        }
+
+        if (secondCard) {
+            triedValues.push(secondCard);
+        }
+
         const answerType = isCorrect ? Answer.CORRECT : Answer.WRONG;
         const newEvent: Event = {
+            id: String(Date.now()),
             answerType,
-            id: "" + Date.now(),
-            triedValues: []
+            triedValues
         }
         events.current.push(newEvent);
 

@@ -5,9 +5,13 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}"
   ],
   theme: {
+    fontFamily: {
+      sans: 'Inter'
+    },
     extend: {
       fontFamily: {
-        'inter': 'Inter'
+        'inter': 'Inter',
+        'japanese': 'Noto Sans Japanese'
       },
       colors: {
         'correct': '#38bdf8',
