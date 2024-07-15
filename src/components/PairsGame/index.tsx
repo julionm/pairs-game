@@ -48,12 +48,12 @@ export function PairsGame({ pairs }: PairsGameOptions) {
                 return acc;
             }, new Map())
     , []);
-    const pairsSet = useMemo(
+    const pairsSet: Set<string> = useMemo(
         () => new Set(
             pairs.map(([val1, val2]) => val1.id + "" + val2.id)
         )
     , []);
-    const attempts = useMemo(() => events.current.length, [isWinModalVisible]);
+    const attempts: number = useMemo(() => events.current.length, [isWinModalVisible]);
     const randomCards = useMemo<Card[]>(() => randomize(Array.from(cards.values())), []);
 
     const EventsList = useCallback(() => (
@@ -98,9 +98,9 @@ export function PairsGame({ pairs }: PairsGameOptions) {
         <div className="h-full w-full grid items-center">
             <CardBoard
                 initialCards={randomCards}
-                isValidAnswer={isPair}
-                onGameFinished={() => setIsWinModalVisible(true)}
-                answerSize={2} />
+                answerChecker={isPair}
+                answerSize={2}
+                onGameFinished={() => setIsWinModalVisible(true)} />
             <Modal
                 isVisible={isWinModalVisible}
                 onClose={() => setIsWinModalVisible(false)}>

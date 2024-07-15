@@ -1,68 +1,62 @@
 import { useRef } from "react";
 import { SimpleCard } from "components/Cards/SimpleCard";
-import { Card, CardRef } from "models/cards";
+import { Card, CardRef, CardState } from "models/cards";
 
 interface CardBoardOptions {
     initialCards: Card[],
     answerSize: number;
-    isValidAnswer: (answer: number[]) => boolean,
+    answerChecker: (answer: number[]) => boolean,
     onGameFinished: () => void
 }
 
-export function CardBoard({ initialCards, isValidAnswer, answerSize, onGameFinished } : CardBoardOptions) {
+export function CardBoard({ initialCards, answerChecker, answerSize, onGameFinished } : CardBoardOptions) {
     
-    const correctCards: Set<number> = new Set();
     const selectedCards: Set<number> = new Set();
     
+    const correctAnswers = useRef<number>(0);
     const cardsElements = useRef<Record<string, CardRef>>({});
 
     // TODO implement columns based on input size
     // const columns = useMemo(() => Math.ceil(Math.sqrt(initialCards.length)), [initialCards]);
     
-    function onSelect (card: Card): boolean {
-        if (isCardCorrect(card.id) || isRoundFinished()) return false;
+    function onSelect (card: Card, cardState: CardState) {
+        if (cardState === CardState.CORRECT || isRoundFinished()) return;
         
-        if (selectedCards.has(card.id)) {
-            selectedCards.delete(card.id);
-            return false;
-        }
-        
-        selectedCards.add(card.id);
-        
-        if (selectedCards.size === answerSize) {
-            setTimeout(() => {
-                if (isValidAnswer([...selectedCards])) {
+        const cardElement = cardsElements.current[card.id];
+
+        if (cardState === CardState.DEFAULT) {
+            selectedCards.add(card.id);
+            cardElement.setCardState(CardState.SELECTED);
+
+            if (isRoundFinished()) {
+                const isAnswer = answerChecker([...selectedCards]);
+                const newCardState = isAnswer ? CardState.CORRECT : CardState.ERROR;
+                
+                if (isAnswer) {
+                    correctAnswers.current += answerSize;
+                }
+
+                setTimeout(() => {
                     selectedCards.forEach(cardId => {
-                        correctCards.add(cardId);
-                        cardsElements.current[cardId].handleSuccess();
+                        cardsElements.current[cardId].setCardState(newCardState);
                     });
-        
+
                     selectedCards.clear();
-        
-                    if (correctCards.size === initialCards.length) {
+
+                    if (correctAnswers.current === initialCards.length) {
                         onGameFinished();
                     }
-        
-                    return;
-                }
-        
-                selectedCards.forEach(cardId => {
-                    cardsElements.current[cardId].handleError();
-                })
-        
-                selectedCards.clear();
-            }, 200);
-        }
+                }, 200);
+            }
 
-        return true;
+        } else if (cardState === CardState.SELECTED) {
+            selectedCards.delete(card.id);
+            cardElement.setCardState(CardState.DEFAULT);
+        }
     }
 
     function isRoundFinished() {
         return selectedCards.size === answerSize;
-    }
-
-    function isCardCorrect (cardId: number) {
-        return correctCards.has(cardId);
     }
 
     return (

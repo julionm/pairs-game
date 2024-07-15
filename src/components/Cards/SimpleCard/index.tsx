@@ -1,22 +1,17 @@
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { Card, CardRef } from "models/cards";
+import { Card, CardRef, CardState } from "models/cards";
 import { ComponentByCardType } from "components/Cards/ComponentByCardType";
-
-enum CardState {
-    DEFAULT = 'default',
-    SELECTED = 'selected',
-    CORRECT = 'correct'
-}
 
 const cardStateToClass: Record<CardState, String> = {
     [CardState.DEFAULT]: 'hover:scale-105 border-2 border-gray-500',
     [CardState.CORRECT]: 'bg-correct',
-    [CardState.SELECTED]: 'bg-wrong'
+    [CardState.SELECTED]: 'bg-wrong',
+    [CardState.ERROR]: 'bg-wrong'
 }
 
 interface CardOptions {
     card: Card,
-    onSelect: (card: Card) => boolean
+    onSelect: (card: Card, cardState: CardState) => void
 }
 
 export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
@@ -32,24 +27,26 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
 
         const [cardState, setCardState] = useState<CardState>(CardState.DEFAULT);
         const [customClass, setCustomClass] = useState<String>("");
+        
         const cardRef = useRef<HTMLDivElement | null>(null);
 
         useImperativeHandle(ref, () => {
             return {
-                handleError: () => {
-                    if (!cardRef.current) {
-                        return;
+                setCardState: (cardState: CardState) => {
+                    if (cardState === CardState.ERROR) {
+                        if (!cardRef.current) {
+                            return;
+                        }
+                        
+                        setCustomClass('animate-[wrong_0.3s_linear_infinite]');
+    
+                        setTimeout(() => {
+                            setCustomClass('');
+                            setCardState(CardState.DEFAULT);
+                        }, 300);    
+                    } else {
+                        setCardState(cardState);
                     }
-                    
-                    setCustomClass('animate-[wrong_0.3s_linear_infinite]');
-
-                    setTimeout(() => {
-                        setCustomClass('');
-                        setCardState(CardState.DEFAULT);
-                    }, 300);
-                },
-                handleSuccess: () => {
-                    setCardState(CardState.CORRECT);
                 }
             }
         }, []);
@@ -57,13 +54,7 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
         function handleSelection() {
             if (cardState === CardState.CORRECT) return;
 
-            if (cardState === CardState.DEFAULT) {
-                setCardState(CardState.SELECTED);
-            } else if (cardState === CardState.SELECTED) {
-                setCardState(CardState.DEFAULT);
-            }
-
-            onSelect(card);
+            onSelect(card, cardState);
         }
 
         return (

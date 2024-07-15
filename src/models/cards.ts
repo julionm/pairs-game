@@ -11,6 +11,12 @@ export enum Types {
 }
 
 export interface CardRef {
-    handleError: (callback?: () => void) => void,
-    handleSuccess: (callback?: () => void) => void
+    setCardState: (cardState: CardState) => void
+}
+
+export enum CardState {
+    DEFAULT = 'default',
+    SELECTED = 'selected',
+    CORRECT = 'correct',
+    ERROR = 'error'
 }
