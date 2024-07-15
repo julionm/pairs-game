@@ -25,8 +25,8 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
 
 ## Next Steps
 
-- [ ] think in a real use-case scenario for the pairs game, like the game of matching syllables with hiraganas
-  - [ ] to achieve this I'll need to create some renderers for each possible value
+- [x] think in a real use-case scenario for the pairs game, like the game of matching syllables with hiraganas
+  - [x] to achieve this I'll need to create some renderers for each possible value
 - [x] allow unselecting cards in Pairs Game
 - [x] add counting of miss and hits
 - [ ] maybe add a home screen
@@ -41,4 +41,3 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
 - [x] allow different values for pairs such as: images, letters from other alphabets, maybe even expressions
   - now I'm using ids to identify each value so this will work in the future
 - [ ] make the Pairs Game work for mobile (check how Conexo does this)
-- [ ] 

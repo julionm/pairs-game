@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import { CardBoard } from "components/Board";
+import { CardBoard } from "components/Cards/CardBoard";
 import { Card } from "models/cards";
 import { Modal } from "components/Modal";
 import { randomize } from "utils/random";

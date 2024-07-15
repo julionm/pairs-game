@@ -8,7 +8,7 @@ enum CardState {
     CORRECT = 'correct'
 }
 
-const stateToClass: Record<CardState, String> = {
+const cardStateToClass: Record<CardState, String> = {
     [CardState.DEFAULT]: 'hover:scale-105 border-2 border-gray-500',
     [CardState.CORRECT]: 'bg-correct',
     [CardState.SELECTED]: 'bg-wrong'
@@ -73,7 +73,7 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
                 className={`
                     h-24 w-20 rounded-xl cursor-pointer
                     grid place-items-center transition-[transform]
-                    ${ stateToClass[cardState] }
+                    ${ cardStateToClass[cardState] }
                     ${ customClass }
                 `}
                 onClick={handleSelection}>

@@ -2,20 +2,23 @@ import { useRef } from "react";
 import { SimpleCard } from "components/Cards/SimpleCard";
 import { Card, CardRef } from "models/cards";
 
-interface BoardOptions {
+interface CardBoardOptions {
     initialCards: Card[],
     answerSize: number;
     isValidAnswer: (answer: number[]) => boolean,
     onGameFinished: () => void
 }
 
-export function CardBoard({ initialCards, isValidAnswer, answerSize, onGameFinished } : BoardOptions) {
-
+export function CardBoard({ initialCards, isValidAnswer, answerSize, onGameFinished } : CardBoardOptions) {
+    
     const correctCards: Set<number> = new Set();
     const selectedCards: Set<number> = new Set();
     
     const cardsElements = useRef<Record<string, CardRef>>({});
 
+    // TODO implement columns based on input size
+    // const columns = useMemo(() => Math.ceil(Math.sqrt(initialCards.length)), [initialCards]);
+    
     function onSelect (card: Card): boolean {
         if (isCardCorrect(card.id) || isRoundFinished()) return false;
         
@@ -65,7 +68,7 @@ export function CardBoard({ initialCards, isValidAnswer, answerSize, onGameFinis
     return (
         <div
             id="board"
-            className={`max-w-screen-lg grid grid-cols-[repeat(4,auto)] sm:grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
+            className={`max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
             {
                 initialCards.map((card: Card) => (
                     <SimpleCard
