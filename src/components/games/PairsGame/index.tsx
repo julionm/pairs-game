@@ -1,6 +1,6 @@
-import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import { CardBoard } from "components/Cards/CardBoard";
-import { Card } from "models/cards";
+import { ReactNode, useCallback, useMemo, useState } from "react";
+import { CardBoard } from "components/cards/CardBoard";
+import { Answer, Card, Round } from "models/cards";
 import { Modal } from "components/Modal";
 import { randomize } from "utils/random";
 
@@ -8,18 +8,7 @@ interface PairsGameOptions {
     pairs: Card[][]
 }
 
-interface Event {
-   answerType: Answer,
-   id: string,
-   triedValues: Card[] // value types
-}
-
 type SquareCallback= () => ReactNode;
-
-enum Answer {
-    CORRECT = "correct",
-    WRONG = "wrong"
-}
 
 const CorrectSquare: SquareCallback = () => (
     <div className="h-8 aspect-square rounded-sm bg-correct"></div>
@@ -36,9 +25,8 @@ const SquareByType: Record<Answer, SquareCallback> = {
 
 export function PairsGame({ pairs }: PairsGameOptions) {
 
-    const [isWinModalVisible, setIsWinModalVisible] = useState(false);
-
-    const events = useRef<Event[]>([]);
+    const [rounds, setRounds] = useState<Round[]>([]);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
     const cards: Map<number, Card> = useMemo(
         () =>
@@ -53,45 +41,28 @@ export function PairsGame({ pairs }: PairsGameOptions) {
             pairs.map(([val1, val2]) => val1.id + "" + val2.id)
         )
     , []);
-    const attempts: number = useMemo(() => events.current.length, [isWinModalVisible]);
     const randomCards = useMemo<Card[]>(() => randomize(Array.from(cards.values())), []);
 
-    const EventsList = useCallback(() => (
-        events.current.map(event => {
-            const Component = SquareByType[event.answerType];
+    const RoundsList = useCallback(() => (
+        rounds.map(round => {
+            const Component = SquareByType[round.answerType];
 
             return (
-                <Component key={event.id} />
+                <Component key={round.id} />
             );
         })
-    ), [isWinModalVisible]);
+    ), [rounds]);
 
     function isPair (answer: number[]) {
         const [firstId, secondId] = answer;
         const isCorrect = pairsSet.has(firstId + "" + secondId) || pairsSet.has(secondId + "" + firstId);
-        
-        const triedValues: Card[] = [];
-
-        const firstCard = cards.get(firstId);
-        const secondCard = cards.get(secondId);
-
-        if (firstCard) {
-            triedValues.push(firstCard);
-        }
-
-        if (secondCard) {
-            triedValues.push(secondCard);
-        }
-
-        const answerType = isCorrect ? Answer.CORRECT : Answer.WRONG;
-        const newEvent: Event = {
-            id: String(Date.now()),
-            answerType,
-            triedValues
-        }
-        events.current.push(newEvent);
 
         return isCorrect;
+    }
+
+    function onGameFinished (rounds: Round[]) {
+        setRounds(rounds);
+        setIsModalVisible(true);
     }
 
     return (
@@ -100,17 +71,15 @@ export function PairsGame({ pairs }: PairsGameOptions) {
                 initialCards={randomCards}
                 answerChecker={isPair}
                 answerSize={2}
-                onGameFinished={() => setIsWinModalVisible(true)} />
-            <Modal
-                isVisible={isWinModalVisible}
-                onClose={() => setIsWinModalVisible(false)}>
+                onGameFinished={onGameFinished} />
+            <Modal isVisible={isModalVisible}>
                 <div className="p-6 flex flex-col items-center gap-4">
                     <h1 className="text-xl font-bold">Well Done!</h1>
 
-                    <p>You found all correct cards within {attempts} attempts!</p>
+                    <p>You found all correct cards within {rounds.length} attempts!</p>
 
                     <div className="grid grid-cols-[repeat(4,auto)] gap-2 mx-auto">
-                        <EventsList />
+                        <RoundsList />
                     </div>
                 </div>
             </Modal>

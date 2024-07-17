@@ -20,3 +20,14 @@ export enum CardState {
     CORRECT = 'correct',
     ERROR = 'error'
 }
+
+export enum Answer {
+    CORRECT = "correct",
+    WRONG = "wrong"
+}
+
+export interface Round {
+    answerType: Answer,
+    id: string,
+    triedValues: number[] // value types
+ }

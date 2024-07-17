@@ -25,6 +25,8 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
 
 ## Next Steps
 
+- [ ] create the unique IDs for each pair on PairsGame
+- [ ] 
 - [x] think in a real use-case scenario for the pairs game, like the game of matching syllables with hiraganas
   - [x] to achieve this I'll need to create some renderers for each possible value
 - [x] allow unselecting cards in Pairs Game

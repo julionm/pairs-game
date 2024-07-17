@@ -1,4 +1,4 @@
-import { PairsGame } from "components/PairsGame";
+import { PairsGame } from "components/games/PairsGame";
 import { Card, Types } from "models/cards";
 
 const PAIRS: Card[][] = [

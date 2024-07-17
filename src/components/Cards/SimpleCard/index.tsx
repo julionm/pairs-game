@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { Card, CardRef, CardState } from "models/cards";
-import { ComponentByCardType } from "components/Cards/ComponentByCardType";
+import { ComponentByCardType } from "components/cards/ComponentByCardType";
 
 const cardStateToClass: Record<CardState, String> = {
     [CardState.DEFAULT]: 'hover:scale-105 border-2 border-gray-500',

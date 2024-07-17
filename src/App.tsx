@@ -1,11 +1,11 @@
 import { Header } from 'components/Header';
-import { PairsGamePage } from './pages/PairsGame';
+import { MemoryGamePage } from './pages/MemoryGame';
 
 export function App() {
   return (
     <>
       <Header />
-      <PairsGamePage />
+      <MemoryGamePage />
     </>
   )
 }

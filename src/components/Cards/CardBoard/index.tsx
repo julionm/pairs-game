@@ -1,18 +1,24 @@
 import { useRef } from "react";
-import { SimpleCard } from "components/Cards/SimpleCard";
-import { Card, CardRef, CardState } from "models/cards";
+import { SimpleCard } from "components/cards/SimpleCard";
+import { Answer, Card, CardRef, CardState, Round } from "models/cards";
 
 interface CardBoardOptions {
     initialCards: Card[],
     answerSize: number;
     answerChecker: (answer: number[]) => boolean,
-    onGameFinished: () => void
+    onGameFinished: (rounds: Round[]) => void
 }
 
-export function CardBoard({ initialCards, answerChecker, answerSize, onGameFinished } : CardBoardOptions) {
+export function CardBoard({
+    initialCards,
+    answerChecker,
+    answerSize,
+    onGameFinished,
+} : CardBoardOptions) {
     
     const selectedCards: Set<number> = new Set();
     
+    const rounds = useRef<Round[]>([]);
     const correctAnswers = useRef<number>(0);
     const cardsElements = useRef<Record<string, CardRef>>({});
 
@@ -32,6 +38,8 @@ export function CardBoard({ initialCards, answerChecker, answerSize, onGameFinis
                 const isAnswer = answerChecker([...selectedCards]);
                 const newCardState = isAnswer ? CardState.CORRECT : CardState.ERROR;
                 
+                createRoundStatistics(Array.from(selectedCards), isAnswer);
+
                 if (isAnswer) {
                     correctAnswers.current += answerSize;
                 }
@@ -44,7 +52,7 @@ export function CardBoard({ initialCards, answerChecker, answerSize, onGameFinis
                     selectedCards.clear();
 
                     if (correctAnswers.current === initialCards.length) {
-                        onGameFinished();
+                        onGameFinished(rounds.current);
                     }
                 }, 200);
             }
@@ -57,6 +65,16 @@ export function CardBoard({ initialCards, answerChecker, answerSize, onGameFinis
 
     function isRoundFinished() {
         return selectedCards.size === answerSize;
+    }
+
+    function createRoundStatistics (cardsIds: number[], isCorrect: boolean) {
+        const answerType = isCorrect ? Answer.CORRECT : Answer.WRONG;
+        const newEvent: Round = {
+            id: String(Date.now()),
+            answerType,
+            triedValues: cardsIds
+        }
+        rounds.current.push(newEvent);
     }
 
     return (
