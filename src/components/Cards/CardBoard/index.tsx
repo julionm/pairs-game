@@ -62,7 +62,7 @@ export function CardBoard({ initialCards, answerChecker, answerSize, onGameFinis
     return (
         <div
             id="board"
-            className={`max-w-screen-lg grid grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
+            className={`max-w-screen-lg flex flex-wrap sm:grid sm:grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
             {
                 initialCards.map((card: Card) => (
                     <SimpleCard

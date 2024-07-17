@@ -95,7 +95,7 @@ export function PairsGame({ pairs }: PairsGameOptions) {
     }
 
     return (
-        <div className="h-full w-full grid items-center">
+        <div className="h-full w-full grid items-center py-4">
             <CardBoard
                 initialCards={randomCards}
                 answerChecker={isPair}

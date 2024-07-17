@@ -46,7 +46,7 @@ const PAIRS: Card[][] = [
 
 export function PairsGamePage() {
    return (
-        <div id="container" className="h-screen w-full">
+        <div id="container" className="min-h-screen w-full">
             <PairsGame pairs={PAIRS} />
         </div>
    );
