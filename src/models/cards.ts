@@ -31,3 +31,8 @@ export interface Round {
     id: string,
     triedValues: number[] // value types
  }
+
+export interface CardOptions {
+    card: Card,
+    onSelect: (card: Card, cardState: CardState) => void
+}

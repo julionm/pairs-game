@@ -1,4 +1,5 @@
 import { CardBoard } from "components/cards/CardBoard"
+import { FlippingCard } from "components/cards/FlippingCard";
 import { Card, Round, Types } from "models/cards";
 import { useMemo } from "react";
 import { randomize } from "utils/random";
@@ -55,6 +56,7 @@ export function MemoryGame({ values }: MemoryGameOptions) {
             answerSize={2}
             answerChecker={pairMatch}
             onGameFinished={handleGameFinished}
+            CustomCardElement={FlippingCard}
         />
     )
 }

@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { Card, CardRef, CardState } from "models/cards";
+import { CardOptions, CardRef, CardState } from "models/cards";
 import { ComponentByCardType } from "components/cards/ComponentByCardType";
 
 const cardStateToClass: Record<CardState, String> = {
@@ -7,11 +7,6 @@ const cardStateToClass: Record<CardState, String> = {
     [CardState.CORRECT]: 'bg-correct',
     [CardState.SELECTED]: 'bg-wrong',
     [CardState.ERROR]: 'bg-wrong'
-}
-
-interface CardOptions {
-    card: Card,
-    onSelect: (card: Card, cardState: CardState) => void
 }
 
 export const SimpleCard = forwardRef<CardRef | null, CardOptions>(

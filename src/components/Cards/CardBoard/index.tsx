@@ -1,12 +1,13 @@
 import { useRef } from "react";
 import { SimpleCard } from "components/cards/SimpleCard";
-import { Answer, Card, CardRef, CardState, Round } from "models/cards";
+import { Answer, Card, CardOptions, CardRef, CardState, Round } from "models/cards";
 
 interface CardBoardOptions {
     initialCards: Card[],
     answerSize: number;
     answerChecker: (answer: number[]) => boolean,
-    onGameFinished: (rounds: Round[]) => void
+    onGameFinished: (rounds: Round[]) => void,
+    CustomCardElement?: React.ForwardRefExoticComponent<CardOptions & React.RefAttributes<CardRef | null>>
 }
 
 export function CardBoard({
@@ -14,6 +15,7 @@ export function CardBoard({
     answerChecker,
     answerSize,
     onGameFinished,
+    CustomCardElement = SimpleCard
 } : CardBoardOptions) {
     
     const selectedCards: Set<number> = new Set();
@@ -83,7 +85,7 @@ export function CardBoard({
             className={`max-w-screen-lg flex flex-wrap sm:grid sm:grid-cols-[repeat(5,auto)] justify-center gap-4 mx-auto`}>
             {
                 initialCards.map((card: Card) => (
-                    <SimpleCard
+                    <CustomCardElement
                         key={card.id}
                         ref={(el: CardRef) => cardsElements.current[card.id] = el}
                         card={card}
