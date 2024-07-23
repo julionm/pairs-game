@@ -1,0 +1,10 @@
+export { AppleIcon } from 'components/icons/Apple';
+export { CoffeeIcon } from 'components/icons/Coffee';
+export { CrownIcon } from 'components/icons/Crown';
+export { FishIcon } from 'components/icons/Fish';
+export { HeartIcon } from 'components/icons/Heart';
+export { KeyIcon } from 'components/icons/Key';
+export { OrangeIcon } from 'components/icons/Orange';
+export { PlanetIcon } from 'components/icons/Planet';
+export { SunnyIcon } from 'components/icons/Sunny';
+export { TreeIcon } from 'components/icons/Tree';

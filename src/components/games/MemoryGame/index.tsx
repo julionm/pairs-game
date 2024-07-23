@@ -1,11 +1,11 @@
 import { CardBoard } from "components/cards/CardBoard"
 import { FlippingCard } from "components/cards/FlippingCard";
-import { Card, Round, Types } from "models/cards";
+import { Card, CardValue, Round, Types } from "models/cards";
 import { useMemo } from "react";
 import { randomize } from "utils/random";
 
 interface MemoryGameOptions {
-   values: string[]
+   values: CardValue[]
 }
 
 export function MemoryGame({ values }: MemoryGameOptions) {

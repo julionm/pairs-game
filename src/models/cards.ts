@@ -1,6 +1,10 @@
+import { Icons } from "./icons"
+
+export type CardValue = string | number | Icons;
+
 export interface Card {
     id: number,
-    value: string | number, // string: link, hiragana, 
+    value: CardValue, // string: link, hiragana, 
     type: Types
 }
 

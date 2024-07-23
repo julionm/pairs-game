@@ -27,8 +27,8 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
 
         useImperativeHandle(ref, () => {
             return {
-                setCardState: (cardState: CardState) => {
-                    if (cardState === CardState.ERROR) {
+                setCardState: (newCardState: CardState) => {
+                    if (newCardState === CardState.ERROR) {
                         if (!cardRef.current) {
                             return;
                         }
@@ -40,7 +40,7 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
                             setCardState(CardState.DEFAULT);
                         }, 300);    
                     } else {
-                        setCardState(cardState);
+                        setCardState(newCardState);
                     }
                 }
             }
