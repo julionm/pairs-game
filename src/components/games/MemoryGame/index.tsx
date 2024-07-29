@@ -1,5 +1,5 @@
 import { Statistics } from "components/Statistics";
-import { CardBoard } from "components/cards/CardBoard"
+import { CardBoard } from "components/boards/CardBoard"
 import { FlippingCard } from "components/cards/FlippingCard";
 import { Card, CardValue, Round, Types } from "models/cards";
 import { useMemo, useState } from "react";

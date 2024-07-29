@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CardBoard } from "components/cards/CardBoard";
+import { CardBoard } from "components/boards/CardBoard";
 import { Card, Round } from "models/cards";
 import { randomize } from "utils/random";
 import { Statistics } from "components/Statistics";

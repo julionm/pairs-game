@@ -1,4 +1,4 @@
-import { Modal } from "components/Modal";
+import { Modal } from "components/games/common/Modal";
 import { Answer, Round } from "models/cards";
 import { ReactNode, useCallback } from "react";
 

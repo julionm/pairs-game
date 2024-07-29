@@ -26,7 +26,6 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
 ## Next Steps
 
 - [ ] create the unique IDs for each pair on PairsGame
-- [ ] 
 - [x] think in a real use-case scenario for the pairs game, like the game of matching syllables with hiraganas
   - [x] to achieve this I'll need to create some renderers for each possible value
 - [x] allow unselecting cards in Pairs Game
@@ -37,9 +36,9 @@ ALL VALUES IN THE PAIRS ARRAY **MUST** BE UNIQUE!
    -  create a about page that shows information about me
 - [ ] add a dark mode
 - [ ] add animation when the user selects a pair correctly
-- [ ] create other games that use the same logic (maybe something like conexo)
+- [x] create other games that use the same logic (maybe something like conexo)
   - the idea here is to show that my components are reusable enough
 - [x] you win animation
 - [x] allow different values for pairs such as: images, letters from other alphabets, maybe even expressions
   - now I'm using ids to identify each value so this will work in the future
-- [ ] make the Pairs Game work for mobile (check how Conexo does this)
+- [x] make the Pairs Game work for mobile (check how Conexo does this)
