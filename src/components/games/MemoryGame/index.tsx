@@ -1,7 +1,8 @@
+import { Statistics } from "components/Statistics";
 import { CardBoard } from "components/cards/CardBoard"
 import { FlippingCard } from "components/cards/FlippingCard";
 import { Card, CardValue, Round, Types } from "models/cards";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { randomize } from "utils/random";
 
 interface MemoryGameOptions {
@@ -9,6 +10,9 @@ interface MemoryGameOptions {
 }
 
 export function MemoryGame({ values }: MemoryGameOptions) {
+
+    const [rounds, setRounds] = useState<Round[]>([]);
+    const [showStatistics, setShowStatistics] = useState<boolean>(false);
 
     const cardMapping: Map<number, Card> = useMemo(() => {
         let id = 0;
@@ -47,16 +51,23 @@ export function MemoryGame({ values }: MemoryGameOptions) {
     }
 
     function handleGameFinished (rounds: Round[]) {
-        console.log(rounds);
+        setRounds(rounds);
+        setShowStatistics(true);
     }
 
     return (
-        <CardBoard
-            initialCards={cardList}
-            answerSize={2}
-            answerChecker={pairMatch}
-            onGameFinished={handleGameFinished}
-            CustomCardElement={FlippingCard}
-        />
+        <div className="h-full w-full grid items-center py-4">
+            <CardBoard
+                initialCards={cardList}
+                answerSize={2}
+                answerChecker={pairMatch}
+                onGameFinished={handleGameFinished}
+                CustomCardElement={FlippingCard}
+            />
+            <Statistics
+                rounds={rounds}
+                isVisible={showStatistics}
+                message={`Nice! You solved the memory game with ${rounds.length} attempts!`} />
+        </div>
     )
 }
