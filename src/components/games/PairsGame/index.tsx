@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { CardBoard } from "components/boards/CardBoard";
 import { Card, Round } from "models/cards";
 import { randomize } from "utils/random";
-import { Statistics } from "components/Statistics";
+import { Statistics } from "components/games/common/Statistics";
 
 interface PairsGameOptions {
     pairs: Card[][]

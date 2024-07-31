@@ -6,7 +6,7 @@ const cardStateToClass: Record<CardState, String> = {
     [CardState.DEFAULT]: 'hover:scale-105 border-2 border-gray-500',
     [CardState.CORRECT]: 'bg-correct',
     [CardState.SELECTED]: 'bg-wrong',
-    [CardState.ERROR]: 'bg-wrong'
+    [CardState.ERROR]: 'bg-wrong animate-[wrong_0.3s_linear_infinite]'
 }
 
 export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
@@ -21,26 +21,22 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
         }, []);
 
         const [cardState, setCardState] = useState<CardState>(CardState.DEFAULT);
-        const [customClass, setCustomClass] = useState<String>("");
         
         const cardRef = useRef<HTMLDivElement | null>(null);
 
         useImperativeHandle(ref, () => {
             return {
                 setCardState: (newCardState: CardState) => {
+                    setCardState(newCardState);
+                    
                     if (newCardState === CardState.ERROR) {
                         if (!cardRef.current) {
                             return;
                         }
-                        
-                        setCustomClass('animate-[wrong_0.3s_linear_infinite]');
     
                         setTimeout(() => {
-                            setCustomClass('');
                             setCardState(CardState.DEFAULT);
                         }, 300);    
-                    } else {
-                        setCardState(newCardState);
                     }
                 }
             }
@@ -60,7 +56,6 @@ export const SimpleCard = forwardRef<CardRef | null, CardOptions>(
                     h-24 w-20 rounded-xl cursor-pointer
                     grid place-items-center transition-[transform]
                     ${ cardStateToClass[cardState] }
-                    ${ customClass }
                 `}
                 onClick={handleSelection}>
                 <CardValue />
